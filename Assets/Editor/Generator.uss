@@ -1,0 +1,34 @@
+Label {
+    font-size: 14px;
+    -unity-font-style: italic;
+    
+}
+
+#InfoBox {
+    border-width: 7px;
+    
+}
+
+#Character_Information {
+    border-width: 10px;
+}
+
+#root{
+    background-color: black;
+}
+
+#Stats_list{
+    flex-direction: row;
+}
+
+.list{
+    flex-direction: row;
+}
+
+TextField{
+    flex-grow: 1;
+}
+
+DropdownField{
+    flex-grow: 0.5;
+}

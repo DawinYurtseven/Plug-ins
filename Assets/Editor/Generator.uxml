@@ -1,0 +1,34 @@
+<ui:UXML
+        xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements"
+        xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        engine="UnityEngine.UIElements" 
+        editor="UnityEditor.UIElements" 
+        noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
+        <ui:Style src = "Generator.uss"/>
+    
+    <ui:VisualElement name="InfoBox" >
+        <ui:TextElement text= "This is a little plug in try made with the sole purpose of creating and editing a Turn 
+based Combat System without the use of programming it. This is only a prototype and not meant to replace 
+the actual programming part of it as the UI programming for these systems do not exist. for those purposes,
+getter and setter functions as well as actions functions will be easily addable to ui elements. \n\nif this
+'plug-in' does work with no problems, adding more stuff to it won't just be a possibility."
+        />
+    </ui:VisualElement>
+    
+    <ui:VisualElement name="Character_Information">
+        <ui:VisualElement name = "Stats">
+            <ui:Label text="Stats"/>
+            <ui:VisualElement name="Stat_Container">
+                <uie:PropertyField binding-path="stats.type"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Stats_list">
+                <ui:Button name="add_stats" text="+"/>
+                <ui:Button name="sub_stats" text="-"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        
+    </ui:VisualElement>
+
+    <ui:Button text="Create Player Class for BattleSystem"
+               name="Create_PlayerClass"/>
+</ui:UXML>
