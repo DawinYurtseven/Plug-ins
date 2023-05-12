@@ -15,19 +15,44 @@ getter and setter functions as well as actions functions will be easily addable 
         />
     </ui:VisualElement>
     
-    <ui:VisualElement name="Character_Information">
+    <ui:Foldout name="Character_Information" text="Character Information" class="BigContainer">
         <ui:VisualElement name = "Stats">
-            <ui:Label text="Stats"/>
-            <ui:VisualElement name="Stat_Container">
-                <uie:PropertyField binding-path="stats.type"/>
+            <ui:VisualElement name="Stats_list" class="list">
+                <ui:Label text="Stats"/>
+                <ui:VisualElement name="button_alignment">
+                    <ui:Button name="add_stats" text="+"/>
+                    <ui:Button name="sub_stats" text="-"/>
+                </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="Stats_list">
-                <ui:Button name="add_stats" text="+"/>
-                <ui:Button name="sub_stats" text="-"/>
+            <ui:VisualElement name="Stat_Container">
             </ui:VisualElement>
         </ui:VisualElement>
         
-    </ui:VisualElement>
+        <ui:VisualElement name = "Conditions">
+            <ui:VisualElement name="Condition_List" class="list">
+                <ui:Label text="Conditions"/>
+                <ui:VisualElement name="button_alignment">
+                    <ui:Button name="add_condition" text="+"/>
+                    <ui:Button name="sub_condition" text="-"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="Conditions_Container">
+            </ui:VisualElement>
+        </ui:VisualElement>
+        
+        <ui:VisualElement name="Animations">
+            <ui:VisualElement name="Anim_list" class="list">
+                <ui:Label text="Mandatory Animations"/>
+                <ui:VisualElement name="button_alignment">
+                    <ui:Button name="add_animation" text="+"/>
+                    <ui:Button name="sub_animation" text="-"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="Anim_container">
+            </ui:VisualElement>
+        </ui:VisualElement>
+        
+    </ui:Foldout>
 
     <ui:Button text="Create Player Class for BattleSystem"
                name="Create_PlayerClass"/>

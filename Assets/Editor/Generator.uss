@@ -23,12 +23,31 @@ Label {
 
 .list{
     flex-direction: row;
+    justify-content: space-between;
+}
+
+.list > #button_alignment{
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.prefabItem{
+    flex-direction: row;
+}
+
+.BigContainer > #unity-content {
+    margin-left: 35px;
 }
 
 TextField{
-    flex-grow: 1;
+    flex: 220px;
+    
 }
 
 DropdownField{
-    flex-grow: 0.5;
+    flex: 80px;
+}
+
+Label{
+    min-width: 80px;
 }

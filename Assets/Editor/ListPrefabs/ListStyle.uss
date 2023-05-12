@@ -1,0 +1,12 @@
+TextField{
+    flex: 220px;
+
+}
+
+DropdownField{
+    flex: 80px;
+}
+
+Label{
+    min-width: 80px;
+}
