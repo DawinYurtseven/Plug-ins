@@ -4,9 +4,13 @@ TextField{
 }
 
 DropdownField{
-    flex: 80px;
+    flex: 110px;
 }
 
 Label{
     min-width: 80px;
+}
+
+.prefabItem{
+    flex-direction: row;
 }

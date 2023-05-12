@@ -5,7 +5,17 @@
         xmlns:uie="UnityEditor.UIElements"
         xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
-    <ui:Style src = "ListStyle.uss"/>
-    <ui:VisualElement name = "ConditionPrefab" class="prefabItem">
+    <ui:Style src="ListStyle.uss"/>
+    <ui:VisualElement name="ConditionPrefab" class="rowItem">
+        <ui:VisualElement name="first row" class="prefabItem">
+            <ui:DropdownField name="type" choices="Procentual,fixed amount"/>
+            <ui:TextField name="condition_name" label="Name"/>
+            <ui:Toggle name="is_positive" label="is Positive change"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="second row" class="prefabItem">
+            <ui:DropdownField name="choosable stats"/>
+            <ui:TextField name="amount" label="affliction amount"/>
+            <ui:TextField name="rounds" label="Rounds until terminate"/>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

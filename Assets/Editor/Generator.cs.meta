@@ -7,7 +7,7 @@ MonoImporter:
   - m_ViewDataDictionary: {instanceID: 0}
   - visualTree: {fileID: 9197481963319205126, guid: 24e4266f022494545b5284b9aa382a4e, type: 3}
   - statPrefab: {fileID: 9197481963319205126, guid: f0ce79541f8b3674d88f718d0f9c063e, type: 3}
-  - _conditionPrefab: {fileID: 9197481963319205126, guid: 2f311e39ef4dba9449b30ab354eebe8a, type: 3}
+  - conditionPrefab: {fileID: 9197481963319205126, guid: 2f311e39ef4dba9449b30ab354eebe8a, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

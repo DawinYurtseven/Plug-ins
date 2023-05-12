@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -55,6 +54,7 @@ public class Generator : EditorWindow
     {
         //this part is for initializations of the stacks
         _stats = new Stack<StatValues>();
+        _conditions = new Stack<ConditionValues>();
 
 
         var root = rootVisualElement;
@@ -63,19 +63,21 @@ public class Generator : EditorWindow
         ScriptableObject target = this;
         SerializedObject so = new SerializedObject(target);
         rootVisualElement.Bind(so);
-        
+
         //this part is for the assignment of the VisualElements from the uxml data to this file
         _statList = root.Q<VisualElement>("Stat_Container");
         _conditionList = root.Q<VisualElement>("Conditions_Container");
 
+
         var buttons = root.Query<Button>();
+
         //0-1 for adding and subbing from the stat list
         buttons.AtIndex(0).RegisterCallback<ClickEvent>(AddStat);
         buttons.AtIndex(1).RegisterCallback<ClickEvent>(SubStat);
-        //2-3 for adding and subbing from the conditions list
 
-        /*buttons.AtIndex(2).RegisterCallback<ClickEvent>();
-        buttons.AtIndex(3).RegisterCallback<ClickEvent>();*/
+        //2-3 for adding and subbing from the conditions list
+        buttons.AtIndex(2).RegisterCallback<ClickEvent>(AddCondition);
+        buttons.AtIndex(3).RegisterCallback<ClickEvent>(SubCondition);
 
         //4-5 for adding and subbing from the mandatory animation list
 
@@ -87,7 +89,7 @@ public class Generator : EditorWindow
 
     #region Character Information: Stats
 
-    private Stack<StatValues> _stats;
+    [Header("Stats")] private Stack<StatValues> _stats;
     private VisualElement _statList;
     [SerializeField] private VisualTreeAsset statPrefab;
 
@@ -107,9 +109,11 @@ public class Generator : EditorWindow
 
     private void UpdateStatUI()
     {
+        _statNames.Clear();
         _statList.Clear();
         foreach (var stat in _stats)
         {
+            _statNames.Add(stat.name);
             VisualElement prefab = statPrefab.CloneTree();
 
             var prefabName = prefab.Q<TextField>("Stat_name");
@@ -120,32 +124,116 @@ public class Generator : EditorWindow
             prefabName.value = stat.name;
             prefabType.value = stat.GetValueType();
 
-            prefabName.RegisterCallback<BlurEvent>(_ => stat.name = prefabName.value);
+            prefabName.RegisterCallback<BlurEvent>(_ =>
+            {
+                _statNames.Remove(stat.name);
+                stat.name = prefabName.value;
+                _statNames.Add(stat.name);
+            });
             prefabValue.RegisterCallback<BlurEvent>(_ => stat.value = prefabValue.value);
             prefabType.RegisterCallback<BlurEvent>(_ => stat.SetType(prefabType.value));
             _statList.Add(prefab);
             prefab.SendToBack();
         }
-
-        Debug.Log(_stats.Count);
     }
 
     #endregion
 
     #region Character Information: Conditions
 
-    [SerializeField] private VisualTreeAsset _conditionPrefab;
+    [Header("Conditions")] [SerializeField]
+    private VisualTreeAsset conditionPrefab;
 
     private VisualElement _conditionList;
-    //private Stack<Condition>
+    private Stack<ConditionValues> _conditions;
+
+    private List<string> _statNames;
 
     private void AddCondition(ClickEvent evt)
     {
-        
+        ConditionValues newValue = CreateInstance<ConditionValues>();
+        _conditions.Push(newValue);
+        UpdateConditionUI();
+    }
+
+    private void SubCondition(ClickEvent evt)
+    {
+        if (_conditions.Count == 0) return;
+        _conditions.Pop();
+        UpdateConditionUI();
+    }
+
+    private void UpdateConditionUI()
+    {
+        _conditionList.Clear();
+        foreach (var cond in _conditions)
+        {
+            VisualElement prefab = conditionPrefab.CloneTree();
+
+            var prefabDdfStat = prefab.Q<DropdownField>("choosable stats");
+            var prefabName = prefab.Q<TextField>("condition_name");
+            var prefabType = prefab.Q<DropdownField>("type");
+            var prefabPos = prefab.Q<Toggle>("is_positive");
+            var prefabAmt = prefab.Q<TextField>("amount");
+            var prefabRnd = prefab.Q<TextField>("rounds");
+
+            //set all possible stats
+            prefabDdfStat.choices = _statNames;
+
+            //Assign ui with actual values
+            prefabDdfStat.value = cond.statToChange;
+            prefabName.value = cond.name;
+            prefabType.value = cond.GetTypeOfCondition();
+            prefabPos.value = cond.isPositive;
+            prefabAmt.value = cond.change.ToString();
+            prefabRnd.value = cond.roundsUntilFinish.ToString();
+
+            prefabDdfStat.RegisterCallback<BlurEvent>(_ => cond.statToChange = prefabDdfStat.value);
+            prefabName.RegisterCallback<BlurEvent>(_ => cond.name = prefabName.value);
+            prefabType.RegisterCallback<BlurEvent>(_ => cond.isProcentual = prefabType.value == "Procentual");
+            prefabPos.RegisterCallback<BlurEvent>(_ => cond.isPositive = prefabPos.value);
+            prefabAmt.RegisterCallback<BlurEvent>(_ =>
+            {
+                try
+                {
+                    cond.change = Convert.ToInt32(prefabAmt.value);
+                }
+                catch (FormatException e)
+                {
+                    Debug.Log("Please put in an integer: " + e);
+                    prefabAmt.value = "0";
+                    cond.change = 0;
+                }
+            });
+            prefabRnd.RegisterCallback<BlurEvent>(_ =>
+            {
+                try
+                {
+                    cond.roundsUntilFinish = Convert.ToInt32(prefabRnd.value);
+                }
+                catch (FormatException e)
+                {
+                    Debug.Log("Please enter an Integer: " + e);
+                    prefabRnd.value = "0";
+                    cond.roundsUntilFinish = 0;
+                }
+            });
+
+            _conditionList.Add(prefab);
+            prefab.SendToBack();
+        }
     }
 
     #endregion
-    
+
+    #region Character Information: Animations
+
+    [Header("Animations")] private List<string> animationNames;
+
+    [SerializeField] private VisualTreeAsset animPrefab;
+
+    #endregion
+
     /*
      * this is for when I'm able to understand the "Undo" class better
      */
@@ -165,8 +253,6 @@ public class Generator : EditorWindow
     }
 }
 
- 
-
 
 [Serializable]
 public class StatValues : ScriptableObject
@@ -174,9 +260,9 @@ public class StatValues : ScriptableObject
     public enum StatValueType
     {
         IntType,
-        FloatType,
-        StringType
+        FloatType
     }
+
     public StatValueType type = StatValueType.IntType;
     public new string name = "";
     public string value = "";
@@ -193,9 +279,6 @@ public class StatValues : ScriptableObject
             case "int":
                 type = StatValueType.IntType;
                 break;
-            case "string":
-                type = StatValueType.StringType;
-                break;
             case "float":
                 type = StatValueType.FloatType;
                 break;
@@ -206,8 +289,6 @@ public class StatValues : ScriptableObject
     {
         switch (type)
         {
-            case StatValueType.StringType:
-                return "string";
             case StatValueType.IntType:
                 return "int";
             case StatValueType.FloatType:
@@ -219,16 +300,29 @@ public class StatValues : ScriptableObject
 }
 
 
+[Serializable]
 public class ConditionValues : ScriptableObject
 {
-    public enum ConditionType
-    {
-        StatAfflictive,
-        HpAfflictive,
-        MpAfflictive
-    }
-
+    public bool isProcentual;
     public bool isPositive;
     public new string name;
-    
+    public int roundsUntilFinish;
+    public int change;
+    public string statToChange;
+
+    public override string ToString()
+    {
+        return string.Format("{0} is the condition for {1} with {2} amount in {3} rounds",
+            name, statToChange, change, roundsUntilFinish);
+    }
+
+    public void SetStatToChange(string stat)
+    {
+        statToChange = stat;
+    }
+
+    public string GetTypeOfCondition()
+    {
+        return isProcentual ? "Procentual" : "fixed amount";
+    }
 }

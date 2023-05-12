@@ -1,37 +1,37 @@
 Label {
     font-size: 14px;
     -unity-font-style: italic;
-    
+
 }
 
 #InfoBox {
     border-width: 7px;
-    
+
 }
 
 #Character_Information {
     border-width: 10px;
 }
 
-#root{
+#root {
     background-color: black;
 }
 
-#Stats_list{
+#Stats_list {
     flex-direction: row;
 }
 
-.list{
+.list {
     flex-direction: row;
     justify-content: space-between;
 }
 
-.list > #button_alignment{
+.list > #button_alignment {
     flex-direction: row;
     align-items: flex-end;
 }
 
-.prefabItem{
+.prefabItem {
     flex-direction: row;
 }
 
@@ -39,15 +39,15 @@ Label {
     margin-left: 35px;
 }
 
-TextField{
+TextField {
     flex: 220px;
-    
+
 }
 
-DropdownField{
+DropdownField {
     flex: 80px;
 }
 
-Label{
+Label {
     min-width: 80px;
 }
