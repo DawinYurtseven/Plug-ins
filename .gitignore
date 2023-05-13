@@ -52,6 +52,9 @@ ExportedObj/
 *.pdb.meta
 *.mdb.meta
 
+# remove unnecessary folders
+/.idea
+
 # Unity3D generated file on crash reports
 sysinfo.txt
 
