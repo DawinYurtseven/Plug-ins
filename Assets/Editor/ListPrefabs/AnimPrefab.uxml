@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:uie="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    uie:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+    <ui:Style src="ListStyle.uss"/>
+    <ui:VisualElement name="AnimPrefab" class="prefabItem">
+        <ui:TextField name="AnimName" label="Animation"/>
+    </ui:VisualElement>
+    
+</ui:UXML>

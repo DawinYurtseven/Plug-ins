@@ -49,27 +49,27 @@ public class Generator : EditorWindow
         wnd.titleContent = new GUIContent("Generator");
     }
 
+    private static VisualElement _root;
 
     public void CreateGUI()
     {
-        //this part is for initializations of the stacks
-        _stats = new Stack<StatValues>();
-        _conditions = new Stack<ConditionValues>();
 
 
-        var root = rootVisualElement;
+        _root = rootVisualElement;
         // Each editor window contains a root VisualElement object
-        visualTree.CloneTree(root);
+        visualTree.CloneTree(_root);
         ScriptableObject target = this;
         SerializedObject so = new SerializedObject(target);
         rootVisualElement.Bind(so);
 
-        //this part is for the assignment of the VisualElements from the uxml data to this file
-        _statList = root.Q<VisualElement>("Stat_Container");
-        _conditionList = root.Q<VisualElement>("Conditions_Container");
+        
+        //prep for the list
+        _statList = _root.Q<VisualElement>("Stat_Container");
+        _conditionList  = _root.Q<VisualElement>("Conditions_Container");
+        _animationList  = _root.Q<VisualElement>("Anim_container");
 
 
-        var buttons = root.Query<Button>();
+        var buttons = _root.Query<Button>();
 
         //0-1 for adding and subbing from the stat list
         buttons.AtIndex(0).RegisterCallback<ClickEvent>(AddStat);
@@ -81,16 +81,16 @@ public class Generator : EditorWindow
 
         //4-5 for adding and subbing from the mandatory animation list
 
-        /*buttons.AtIndex(4).RegisterCallback<ClickEvent>();
-        buttons.AtIndex(5).RegisterCallback<ClickEvent>();*/
+        buttons.AtIndex(4).RegisterCallback<ClickEvent>(AddAnimation);
+        buttons.AtIndex(5).RegisterCallback<ClickEvent>(SubAnimation);
 
         buttons.Last().RegisterCallback<ClickEvent>(DebugButton);
     }
 
     #region Character Information: Stats
 
-    [Header("Stats")] private Stack<StatValues> _stats;
-    private VisualElement _statList;
+    [Header("Stats")] private readonly Stack<StatValues> _stats = new Stack<StatValues>();
+    private  VisualElement _statList;
     [SerializeField] private VisualTreeAsset statPrefab;
 
     private void AddStat(ClickEvent evt)
@@ -145,7 +145,7 @@ public class Generator : EditorWindow
     private VisualTreeAsset conditionPrefab;
 
     private VisualElement _conditionList;
-    private Stack<ConditionValues> _conditions;
+    private readonly Stack<ConditionValues> _conditions = new Stack<ConditionValues>();
 
     private List<string> _statNames;
 
@@ -228,9 +228,48 @@ public class Generator : EditorWindow
 
     #region Character Information: Animations
 
-    [Header("Animations")] private List<string> animationNames;
+    [Header("Animations")] private readonly Stack<AnimationNames> _animationNames = new();
 
     [SerializeField] private VisualTreeAsset animPrefab;
+
+    private VisualElement _animationList;
+
+    private void AddAnimation(ClickEvent evt)
+    {
+        var animationNames = CreateInstance<AnimationNames>();
+        _animationNames.Push(animationNames);
+        UpdateAnimationList();
+    }
+
+    private void SubAnimation(ClickEvent evt)
+    {
+        if (_animationNames.Count == 0) return;
+        _animationNames.Pop();
+        UpdateAnimationList();
+    }
+
+    private void UpdateAnimationList()
+    {
+        _animationList.Clear();
+        int index = _animationNames.Count -1;
+        foreach (var anim in _animationNames)
+        {
+            VisualElement prefab = animPrefab.CloneTree();
+
+            var prefabName = prefab.Q<TextField>("AnimName");
+            prefabName.label = $"Animation {index}";
+            prefabName.value = anim.name;
+
+            prefabName.RegisterCallback<BlurEvent>(_ =>
+            {
+                anim.name = prefabName.value;
+            });
+            
+            _animationList.Add(prefab);
+            prefab.SendToBack();
+            index--;
+        }
+    }
 
     #endregion
 
@@ -249,6 +288,10 @@ public class Generator : EditorWindow
 
     private void DebugButton(ClickEvent evt)
     {
+        foreach (var cond in _conditions)
+        {
+            Debug.Log(cond);
+        }
         //TODO: try to understand file writing and reading in c#
     }
 }
@@ -269,7 +312,7 @@ public class StatValues : ScriptableObject
 
     public override string ToString()
     {
-        return name + ": " + value + " is from newType: " + type;
+        return $"{name}: {value} is from type: {type}";
     }
 
     public void SetType(string newType)
@@ -312,8 +355,8 @@ public class ConditionValues : ScriptableObject
 
     public override string ToString()
     {
-        return string.Format("{0} is the condition for {1} with {2} amount in {3} rounds",
-            name, statToChange, change, roundsUntilFinish);
+        return $"{name} is the condition for {statToChange} with {change} {GetTypeOfCondition()} in " +
+               $"{roundsUntilFinish} rounds";
     }
 
     public void SetStatToChange(string stat)
@@ -324,5 +367,17 @@ public class ConditionValues : ScriptableObject
     public string GetTypeOfCondition()
     {
         return isProcentual ? "Procentual" : "fixed amount";
+    }
+}
+
+[Serializable]
+public class AnimationNames : ScriptableObject
+{
+    public new string name;
+    public int animationOrder;
+
+    public override string ToString()
+    {
+        return $"{name} is in order {animationOrder}";
     }
 }
