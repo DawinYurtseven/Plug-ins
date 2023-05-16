@@ -14,7 +14,7 @@ using UnityEngine.UIElements;
             [possible conditions]
             [animations list]
             
-            []check for functionality
+            [x]check for functionality
             [x]check for ui
         }
         {
@@ -271,6 +271,20 @@ public class Generator : EditorWindow
         }
     }
 
+    #endregion
+    
+    #region Character Information: Actions
+    /*
+     * this part is still in design but the basic idea is that it is divided into two part where the first determines
+     * what kind of action it is and the second part about the details of these functions
+     *
+     * this will work by using interfaces that have the main properties and then depending on these properties get
+     * divided into their specialised classes.
+     *
+     * the parser would then use the the specialised reading function of the sub classes and add them into
+     * the Character Information class. these functions are meant to be written with reactive programming
+     */
+    
     #endregion
 
     /*
